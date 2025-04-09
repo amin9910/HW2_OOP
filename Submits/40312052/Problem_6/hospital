@@ -1,0 +1,132 @@
+from abc import ABC ,abstractmethod
+from test.support import patch_list
+
+
+class Paretn(ABC) :
+    @abstractmethod
+    def __init__(self , first_name , last_name , id , age , gender):
+        pass
+
+class Person(Paretn) :
+    def __init__(self , first_name , last_name , id , age , gender) :
+        self.first_name = first_name.title()
+        self.last_name = last_name.title()
+        self.id = id
+        self.age = age
+        self.gender = gender
+
+class Patient(Person) :
+    def __init__(self , first_name , last_name , id , age , gender , disease , doctor) :
+        super().__init__(first_name , last_name , id , age , gender)
+        self.disease = disease
+        self.doctor = doctor.title()
+    def get_patient_details(self) :
+        print(f"Patient Details :\nName: {self.first_name} {self.last_name}\nID: {self.id}\nAge: {self.age}\nGender: {self.gender}\nDisease: {self.disease}\nAssigned Doctor: {self.doctor}")
+
+class Doctor(Person) :
+    def __init__(self , first_name , last_name , id , age , gender , specialization , patients) :
+        super().__init__(self , first_name , last_name , id , age , gender)
+        self.specialization = specialization
+        self.patients = patients
+        self.list_of_datas = dict()
+
+    def add_patient(self , patient) :
+        self.patients.append(patient.first_name + " " + patient.last_name)
+        print(f"Patient added successfully:\nName: {patient.first_name} {patient.last_name}\nID: {patient.id}\nAge: {patient.age}\nGender: {patient.gender}\nDisease: {patient.disease}\nAssigned Doctor: {patient.doctor}")
+    def get_doctor_details(self) :
+        print(f"Doctor Details:\nName: {self.first_name} {self.last_name}\nID: {self.id}\nAge: {self.age}\nGender: {self.gender}\nspecialization: {self.specialization}\npatients:")
+        for i in self.patients :
+            print(i , end = "-")
+
+class Nurse(Person) :
+    def __init__(self, first_name, last_name, id, age, gender, department) :
+        super().__init__(first_name, last_name, id, age, gender)
+        self.department = department
+    def assist_patient(self) :
+        ...
+    def get_nerse_details(self) :
+        print(f"Nerse Details:\nName: {self.first_name} {self.last_name}\nID: {self.id}\nAge: {self.age}\nGender: {self.gender}")
+
+class Appointment :
+    def __init__(self , patient , doctor , appointment_time , status) :
+        self.patient = patient
+        self.doctor = doctor
+        self.appointment_time = appointment_time
+        self.status = status
+    def schdule_appointment(self) :
+        if self.appointment_time in self.doctor.list_of_datas.values() :
+            print("this time has been reserved,please try another time")
+        else :
+            self.doctor.list_of_datas[self.patient] = self.appointment_time
+            print(f"Appointment scheduled successfully :\nPatient: {self.patient.first_name} {self.patient.last_name}\nDoctor: Dr.{self.doctor.first_name} {self.doctor.last_name}")
+        print(f"Data and Time: {self.appointment_time}\nstatus: scheduled")
+    def cancel_appointment(self) :
+        if self.appointment_time in self.doctor.list_of_datas :
+            for i in self.doctor.list_of_datas.keys() :
+                if self.doctor.list_of_datas[i] == self.appointment_time :
+                    self.doctor.list_of_datas.pop(i)
+
+            self.doctor.list_of_datas.pop(self.appointment_time)
+            print(f"appointment canceled successfully\nPatient: {self.patient.first_name} {self.patient.last_name}\nDoctor: Dr.{self.doctor.first_name} {self.doctor.last_name}\nData and Time: {self.appointment_time}\nstatus: canceled")
+        else :
+            print("this time hasnt been reserved")
+    def get_appointment_details(self) :
+        for i in self.doctor.list_of_datas.keys() :
+            print(f"Patient: {i.fisrt_name}{i.last_name},Doctor:{i.doctor} , data and time: {self.doctor.list_of_datas[i]}")
+
+class Hospital :
+    def __init__(self , patients , doctors , nurses , appointment) :
+        self.patients = patients
+        self.doctors = doctors
+        self.nurses = nurses
+        self.appointment = appointment
+    def add_patient(self , patient) :
+        self.patients.append(patient)
+        print(f"Patient added successfully:\nName: {patient.first_name} {patient.last_name}\nID: {patient.id}\nAge: {patient.age}\nGender: {patient.gender}\nDisease: {patient.disease}\nAssigned Doctor: {patient.doctor}")
+    def add_doctor(self , doctor) :
+        self.doctors.append(doctor)
+        print(f"Doctor Details:\nName: {doctor.first_name} {doctor.last_name}\nID: {doctor.id}\nAge: {doctor.age}\nGender: {doctor.gender}\nspecialization: {doctor.specialization}\npatients:")
+    def add_nurse(self , nurse) :
+        self.nurses.append(nurse)
+        print(f"Nerse Details:\nName: {nurse.first_name} {nurse.last_name}\nID: {nurse.id}\nAge: {nurse.age}\nGender: {nurse.gender}")
+    def schedule_appointment(self) :
+        if self.appointment_time in self.doctor.list_of_datas.values() :
+            print("this time has been reserved,please try another time")
+        else :
+            self.doctor.list_of_datas[self.patient] = self.appointment_time
+            print(f"Appointment scheduled successfully :\nPatient: {self.patient.first_name} {self.patient.last_name}\nDoctor: Dr.{self.doctor.first_name} {self.doctor.last_name}")
+        print(f"Data and Time: {self.appointment_time}\nstatus: scheduled")
+    def get_all_patients(self) :
+        for i in self.patients :
+            print(f"Patient Details :\nName: {i.first_name} {i.last_name}\nID: {i.id}\nAge: {i.age}\nGender: {i.gender}\nDisease: {i.disease}\nAssigned Doctor: {i.doctor}")
+    def get_doctor_patient(self) :
+        for i in self.doctors :
+            for j in i.list_of_datas :
+                print(j)
+    def get_patient_appointment(self) :
+        for i in self.doctors :
+            print(f"Dr.{i.fisrt_name} {i.last_name} , ID: {i.id} , specializatoin:{i.specialization}")
+    def show_all_doctors(self) :
+        for i in self.doctors :
+            print(f"Doctor Details:\nName: {i.first_name} {i.last_name}\nID: {i.id}\nAge: {i.age}\nGender: {i.gender}\nspecialization: {i.specialization}\npatients:")
+            for i in self.patients:
+                print(i, end="-")
+if __name__ == "__main__" :
+    x = input()
+    match x :
+        case "add_doctor" :
+           Hospital.add_doctor()
+        case "add_patient" :
+            Hospital.add_patient()
+        case "add_nurse" :
+            Hospital.add_nurse()
+        case "give_appoint" :
+            Hospital.schedule_appointment()
+        case "show_patient_details" :
+            Patient.get_patient_details()
+        case "show_doctor_details" :
+            Doctor.get_doctor_details()
+        case "cancel_appointmeny" :
+            Appointment.cancel_appointment()
+        case "show_all_doctors" :
+            Hospital.show_all_doctors()
