@@ -1,0 +1,143 @@
+class Users:
+    users_list = list()
+
+    def __int__(self, name, pasword) :
+        self.name = name
+        self.pasword = pasword
+        self.cart = []
+        self._balance = 500
+
+    @staticmethod
+    def show_menu():
+        print("1.view products\n2.search products\n3.add to carts\n4.view carts\n5.remove from carts\n6.finalize order\n7.balance\n8.logout")
+
+    def login(self):
+        for i in Users.users_list :
+            if i.name == self.name :
+                if i.pasword == self.pasword :
+                    print("login seccessfully!")
+                    Users.show_menu()
+                    return
+        print("this user not found")
+
+    @staticmethod
+    def sign_up():
+        name = (str)
+        pasword = (str)
+        while 1 :
+            name = input("enter your name : ")
+            for i in Users.users_list :
+                if name == i.name :
+                    print("this name has been used , please try again : ")
+                    continue
+            break
+        while 1 :
+            pasword = input("enter your pasword(min 8 character : ")
+            for i in Users.users_list:
+                if pasword == i.pasword or len(pasword) < 8:
+                    print("this pasword is invalid , please try again : ")
+                    continue
+            break
+        return f"{name} {pasword}"
+
+    def search_product(self):
+        name = input("enter the name the product")
+        category = input("enter the category of the product")
+        range_price = input("enter the range of price")
+        j = 0
+        for i in Products.products_list :
+            if i.name == name and i.category == category and range_price.split("-")[0] <= i.price <= \
+                    range_price.split("-")[1] :
+                print(j, i.name, "*", i.price, "*", i.category, "*", i.price)
+            j += 1
+        """x = int(input("enter the number of product"))
+        y = int(input("enter how many do you want ?"))
+        if Products.products_list[x].quantity >= y:
+            for i in range(y):
+                self.cart.append(Products.products_list[x])"""
+
+    def add_to_cart(self) :
+        x = int(input("enter the number of the product which you want"))
+        y = int(input("enter the quantity of the product which you want"))
+        if y <= Products.products_list[x].quantity and y * Products.products_list[x].price <= self.balance :
+            for i in range(y) :
+                Users.add_to_carts(Products.products_list[x])
+
+
+    def remove_from_cart(self):
+        name = input("enter the name the product")
+        category = input("enter the category of the product")
+        range_price = input("enter the range of price")
+        y = int(input("how many do you want to remove"))
+        for i in range(y) :
+            for i in self.cart :
+                if i.name == name and i.category == category and range_price.split("-")[1] >= i.price >= \
+                        range_price.split("-")[0] :
+                    self.cart.remove(i)
+
+    @staticmethod
+    def view_products():
+        for i in Products.products_list:
+            print(i.name, "*", i.price, "*", i.category, "*", i.price)
+
+    def view_cart(self) :
+        for i in self.cart :
+            print(i.name, "*", i.price, "*", i.category, "*", i.price)
+
+    def finalize_order(self) :
+        x = 0
+        for i in self.cart :
+            x += i.price
+        print(f"the final price is {x}")
+
+    def add_balance(self , value) :
+        if value >= 0 :
+            self._balance += value
+
+
+
+class Products:
+    products_list = list()
+
+    def __int__(self, name, price, category, quantity):
+        self.name = name
+        self.price = price
+        self.category = category
+        self.quantuty = quantity
+
+
+if __name__ == "__main__" :
+    print("well come to the online store!")
+    print("1.login\n2.sign up\n3.exit\n")
+    x = int(input())
+    if x == 1:
+        name = input("enter your name : ")
+        pasword = input("enter your pasword : ")
+        a = Users(name, pasword)
+        a.login()
+    elif x == 2:
+        n = Users.sign_up()
+        a = Users(n.split()[0], n.split()[1])
+        Users.users_list.append(a)
+        print("added seccessfully")
+        Users.show_menu()
+        m = int(input())
+        match m:
+            case 1:
+                a.view_products()
+            case 2:
+                a.search_product()
+            case 3:
+                a.add_to_carts()
+            case 4:
+                a.view_cart()
+            case 5:
+                a.remove_from_cart()
+            case 6:
+                a.finalize_order()
+            case 7:
+                a.balance()
+            case 8:
+                a = ""
+                print("logouted")
+
