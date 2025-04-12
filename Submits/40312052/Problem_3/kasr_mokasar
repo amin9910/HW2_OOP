@@ -1,0 +1,109 @@
+import math
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+def lcm(a, b):
+    return abs(a*b) // gcd(a, b)
+
+class Fraction:
+    def __init__(self, sorat=0, makhraj=1):
+        bmm = gcd(abs(sorat), abs(makhraj))
+        self.sorat = sorat // bmm
+        self.makhraj = makhraj // bmm
+
+    def __str__(self):
+        return f"{self.sorat} / {self.makhraj}"
+    
+    def __float__(self):
+        return self.sorat / self.makhraj
+
+    def _arithmetic_operation(self, other, operation):
+        if isinstance(other, Fraction):
+            other_sorat = other.sorat
+            other_makhraj = other.makhraj
+        elif isinstance(other, int):
+            other_sorat = other
+            other_makhraj = 1
+        elif isinstance(other, float):
+            return operation(float(self), other)
+
+        if operation == self.__add__ or operation == self.__sub__ : # جمع و تفریق
+            makhraj = lcm(self.makhraj, other_makhraj)
+            sorat1_new = self.sorat * (makhraj // self.makhraj)
+            sorat2_new = other_sorat * (makhraj // other_makhraj)
+            if operation == self.__add__:
+                sorat = sorat1_new + sorat2_new
+            else:
+                sorat = sorat1_new - sorat2_new
+            return Fraction(sorat,makhraj)
+        elif operation == self.__mul__:
+            return Fraction(self.sorat * other_sorat, self.makhraj * other_makhraj)
+        elif operation == self.__truediv__:
+            return Fraction(self.sorat * other_makhraj, self.makhraj * other_sorat)
+
+
+    def __add__(self, other):
+        return self._arithmetic_operation(other, self.__add__)
+
+    def __radd__(self, other):
+        return self + other
+
+    def __sub__(self, other):
+        return self._arithmetic_operation(other, self.__sub__)
+
+    def __rsub__(self, other):
+        return Fraction(other) - self
+
+    def __mul__(self, other):
+        return self._arithmetic_operation(other, self.__mul__)
+
+    def __rmul__(self, other):
+        return self * other
+
+    def __truediv__(self, other):
+        return self._arithmetic_operation(other, self.__truediv__)
+
+    def __rtruediv__(self, other):
+        return Fraction(other) / self
+
+    def _comparison_operation(self, other, operation):
+        if isinstance(other, Fraction):
+            return operation(float(self), float(other))
+        elif isinstance(other, (int, float)):
+            return operation(float(self), other)
+
+    def __eq__(self, other):
+        return self._comparison_operation(other, float.__eq__)
+    def __ne__(self, other):
+        return self._comparison_operation(other, float.__ne__)
+
+    def __gt__(self, other):
+        return self._comparison_operation(other, float.__gt__)
+    def __ge__(self, other):
+        return self._comparison_operation(other, float.__ge__)
+
+    def __lt__(self, other):
+        return self._comparison_operation(other, float.__lt__)
+    def __le__(self, other):
+        return self._comparison_operation(other, float.__le__)
+
+
+
+if __name__ == "__main__":
+    f1 = Fraction(1, 2)
+    f2 = Fraction(3, 4)
+    f3 = Fraction()
+
+    print(f"f1 + f2 = {f1 + f2}")
+    print(f"f2 / f1 = {f2 / f1}")
+    print(f"f1 + 2 = {f1 + 2}")
+    print(f"3 - f1 = {3 - f1}")
+    print(f"float(f1) = {float(f1)}")
+
+    print(f"f1 > f2: {f1 > f2}")
+    print(f"f1 < f2: {f1 < f2}")
+
+    print(f"f2 > 1: {f2 > 1}")
+    print(f"f1 == 0.5: {f1 == 0.5}")
+    print(f"f2 >= 0.7: {f2 >= 0.7}")
