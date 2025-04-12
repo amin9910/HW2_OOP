@@ -1,0 +1,61 @@
+class Vehicle :
+    def __init__(self, type, fixed_cost, id , fuel_consumption_per_km , variable_cost_per_km):
+        self.type = type
+        self.fixed_cost = fixed_cost
+        self.id = id
+        self.fuel_consumption_per_km = fuel_consumption_per_km
+        self.variable_cost_per_km = variable_cost_per_km
+        self.origin = ""
+        self.destination = ""
+        self.cargo_weight = 0
+        self.total_variable_cost = 0
+        self.total_fuel_cost = 0
+
+    def add_trip(self, origin, destination, cargo_weight, distance, fuel_price):
+        self.origin = origin
+        self.destination = destination
+        self.cargo_weight = cargo_weight
+        variable_cost = distance * self.variable_cost_per_km
+        fuel_cost = fuel_price * distance * self.fuel_consumption_per_km
+        self.total_variable_cost = self.total_variable_cost + variable_cost
+        self.total_fuel_cost = self.total_fuel_cost + fuel_cost
+
+    def get_monthly_costs(self):
+        total_cost = self.fixed_cost + self.total_variable_cost + self.total_fuel_cost
+        return [self.id , self.type, self.fixed_cost, self.total_variable_cost, self.total_fuel_cost, total_cost]
+
+class Fleet_manager:
+    def __init__(self) :
+        self.vehicles = dict()
+        self.fuel_prices = dict()
+
+    def add_vehicle(self, type, fixed_cost, variable_cost_per_km, fuel_consumption_per_km):
+        id = len(self.vehicles)
+        vehicle = Vehicle(id, type, fixed_cost, variable_cost_per_km, fuel_consumption_per_km)
+        self.vehicles[id] = vehicle
+
+    def set_fuel_price(self, fuel_type, price):
+        self.fuel_prices[fuel_type] = price
+
+    def add_trip(self, id, origin, destination, cargo_weight, distance, fuel_type):
+        if id in self.vehicles and fuel_type in self.fuel_prices:
+            self.vehicles[id].add_trip(origin , destination, cargo_weight , distance , self.fuel_prices[fuel_type])
+
+    def end_month(self):
+        print("monthly costs report:")
+        for vehicle in self.vehicles.values():
+            costs = vehicle.get_monthly_costs()
+            print(f"vehicle iD {costs[0]} ({costs[1]}):")
+            print(f"fixed cost: {costs[2]}")
+            print(f"variable cost: {costs[3]}")
+            print(f"fuel cost: {costs[4]}")
+            print(f"total cost: {costs[5]}\n")
+
+fleet_manager = Fleet_manager()
+fleet_manager.add_vehicle("TRUCK", 1000000, 500, 3)
+fleet_manager.add_vehicle("PLANE", 5000000, 2000, 10)
+fleet_manager.set_fuel_price("DIESEL", 1500)
+fleet_manager.set_fuel_price("JET_FUEL", 5000)
+fleet_manager.add_trip(1, "A", "B", 2000, 100, "DIESEL")
+fleet_manager.add_trip(2, "A", "C", 5000, 500, "JET_FUEL")
+fleet_manager.end_month()
