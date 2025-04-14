@@ -28,7 +28,7 @@ class Fraction:
         elif isinstance(other, float):
             return operation(float(self), other)
 
-        if operation == self.__add__ or operation == self.__sub__ : # جمع و تفریق
+        if operation == self.__add__ or operation == self.__sub__ :
             makhraj = lcm(self.makhraj, other_makhraj)
             sorat1_new = self.sorat * (makhraj // self.makhraj)
             sorat2_new = other_sorat * (makhraj // other_makhraj)
@@ -40,7 +40,7 @@ class Fraction:
         elif operation == self.__mul__:
             return Fraction(self.sorat * other_sorat, self.makhraj * other_makhraj)
         elif operation == self.__truediv__:
-            return Fraction(self.sorat * other_makhraj, self.makhraj * other_sorat)
+            return Fraction((self.sorat * other_makhraj) / (self.makhraj * other_sorat) , self.makhraj * other_makhraj)
 
 
     def __add__(self, other):
