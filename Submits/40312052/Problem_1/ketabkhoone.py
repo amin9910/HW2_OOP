@@ -18,7 +18,7 @@ class Book :
     def get_ditails(self , name) :
         print(f"{name} by {self.author} is {self.status}")
 
-class Library() :
+class Library :
     def __init__(self) :
         self.books = list()
 
