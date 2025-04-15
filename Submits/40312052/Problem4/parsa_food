@@ -1,0 +1,140 @@
+from abc import ABC , abstractmethod
+
+class Food(ABC) :
+    @abstractmethod
+    def __init__(self , name , food_id) :
+        ...
+    @abstractmethod
+    def calculate_price(self) :
+        ...
+
+    def __add__(self , food):
+        if isinstance(food , Food) :
+            return self.final_price + food.final_price
+    def __mul__(self, other):
+        return self.final_price * other
+
+class Pizza(Food) :
+    def __init__(self , name , food_id, type , size , quantity, extra_list ):
+        super().__init__(name , food_id)
+        self.name = name
+        self.food_id = food_id
+        self.size = size
+        self.type = type
+        self.quantity = quantity
+        self.dessert = ["olvies" , "sause" , "cheese"]
+        self.final_price = self.calculate_price(extra_list)
+
+    def calculate_price(self , extra_list):
+        final_price = 0
+        match self.size :
+            case "small" :
+                final_price += 8
+            case "medium" :
+                final_price += 12
+            case "large" :
+                final_price += 16
+        for i in extra_list :
+            match i :
+                case "olvies" :
+                    final_price += 1
+                case "extra" :
+                    for j in i :
+                        if j == "extra cheese" :
+                            final_price += 2
+                        elif j == "extra sause" :
+                            final_price += 1.5
+                case "300ml" :
+                    final_price += 2
+                case "500ml" :
+                    final_price += 3
+        return final_price
+
+
+class Burger(Food) :
+    def __init__(self , name , food_id, quantity , extra_list) :
+        super().__init__(name)
+        self.name = name
+        self.food_id = food_id
+        self.quantity = quantity
+        self.meat_line = ["single" , "double" , "triple"]
+        self.bread_kind = ["brioche" , "sesame" , "regular"]
+        self.extra_drink = ["egg" , "bacon" , "cheese"]
+        self.extra_list = extra_list
+        self.final_price = self.calculate_price(self.extra_list)
+
+    def calculate_price(self):
+        final_price = 0
+        for i in self.extra_list :
+            match i :
+                case "single" :
+                    final_price += 6
+                case "double" :
+                    final_price += 9
+                case "triple" :
+                    final_price += 12
+                case "brioche":
+                    final_price += 1
+                case "sesame":
+                    final_price += 1
+                case "regular":
+                    final_price += 1
+                case "egg":
+                    final_price += 1.5
+                case "bacon":
+                    final_price += 2
+                case "cheese":
+                    final_price += 1
+                case "300ml" :
+                    final_price+= 2
+                case "500ml" :
+                    final_price += 3
+                case "1l" :
+                    final_price += 5
+        return final_price
+
+class Order :
+    foods = {}
+    def add_item(self , food):
+        for i in self.foods.values() :
+            if food.food_id in i :
+                i.quantity += 1
+        if food.name == "pizza" :
+            self.foods[food.food_id] = Food(food.name , food.food_id , food.type , food.size , food.quantity , food.extra_list)
+        if food.name == "burger" :
+            self.foods[food.food_id] = Food(food.name , food.food_id , food.quantity , food.extra_list)
+
+    def remove_item(self , food_id):
+        del self.foods[food_id]
+
+    def calcculate_total(self , list_of_orders):
+        total_price = 0
+        for i in list_of_orders :
+            total_price += i.final_price * i.quantity
+        return total_price
+    @staticmethod
+    def display_order(list_of_order):
+        for i in list_of_order :
+            if i.name == "pizza":
+                print(i.name, i.food_id, i.type, i.size, i.quantity, i.extra_list)
+            elif i.name == "burger" :
+                print(i.name , i.food_id , i.quantity , i.extra_list)
+
+
+if __name__ == "__main__" :
+    list_of_order = list()
+    x = int(input("enter the number of your order :"))
+    order_class = Order()
+    for i in range(x) :
+        print("enter your orders : ")
+        print("name , food_id , type , size , quantity , list of extras")
+        n = input().split(" ")
+        if n[0] == "pizza" :
+            m = Pizza(n[0] , n[1] , n[2] , n[3] , n[4] , n[5] , n[6])
+
+        elif n[1] == "burger" :
+            m = Burger(n[0] , n[1] , n[2] , n[3])
+
+        list_of_order.append(m)
+    order_class.display_order(list_of_order)
+    print(order_class.calcculate_total())
